@@ -7,6 +7,7 @@ import LofiPlayer from "./components/LofiPlayer";
 import ProgressGraph from "./components/ProgressGraph";
 import AttemptToggle from "./components/AttemptToggle";
 import ActivityBreakdown from "./components/ActivityBreakdown";
+import MotivationButton from "./components/MotivationButton";
 
 function App() {
   const [reload, setReload] = useState(false);
@@ -75,6 +76,11 @@ function App() {
           onAttemptChange={setSelectedAttempt}
         />
 
+        {/* Motivation Button */}
+        <div className="mb-6">
+          <MotivationButton selectedAttempt={selectedAttempt} />
+        </div>
+
         {selectedAttempt === 2 ? (
           // Attempt 2 Layout: Timer + Stats + Activity Breakdown
           <div className="grid lg:grid-cols-3 gap-6 mb-8">
@@ -109,6 +115,7 @@ function App() {
         <div className="mt-8">
           <SessionList selectedAttempt={selectedAttempt} borderColor={borderColor} key={`${reload}-${selectedAttempt}`} />
         </div>
+
       </main>
 
       {/* Lofi Music Player */}
