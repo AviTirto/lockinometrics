@@ -5,9 +5,9 @@ import { db } from "../firebase";
 export default function ExamCountdown() {
   const [isOpen, setIsOpen] = useState(true);
   const [totalHours, setTotalHours] = useState(0);
-  const [targetHours, setTargetHours] = useState(30);
+  const [targetHours, setTargetHours] = useState(100);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
-  const [tempGoal, setTempGoal] = useState(30);
+  const [tempGoal, setTempGoal] = useState(100);
   const examDate = new Date("2025-12-05T09:00:00"); // December 5, 2025 at 9 AM
 
   useEffect(() => {
