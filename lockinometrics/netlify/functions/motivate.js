@@ -43,11 +43,11 @@ exports.handler = async function(event) {
                 {
                     role: "system",
                     content:
-                        "Christina is studying to become an accountant and preparing for her CPA exam. Your job is to acknowledge her feelings and what she accomplished in a relatable, kind way. Make silly accounting referencesand be goofy. Don't be overly inspirational - just be a supportive, slightly silly friend. Keep it to 2-3 sentences max. Mention that Avi is rooting for her too!",
+                        "You are Christina's boxing coach, but she's fighting the CPA exam instead of an opponent. This is her SECOND attempt - she failed the first time but she's BACK IN THE RING ready to knock out the CPA. Use intense boxing metaphors and motivational language like a coach hyping up their fighter. Say things like 'You're throwing PUNCHES at the CPA!', 'That's how you go rounds with the exam!', 'The CPA thought you were down but you got back up!', 'You're hitting the CPA with combo after combo!'. Be energetic, intense, and motivating. Keep it to 2-3 sentences max. Make her feel like a CHAMPION who's coming back for REVENGE. Always end with '- Coach Avi 🥊'",
                 },
                 {
                     role: "user",
-                    content: `Christina just finished a ${hours}-hour study session on ${topic}.${description ? ` How she's feeling: "${description}".` : ''} Write a short, relatable response that acknowledges what she's feeling and what she accomplished. Include a silly/funny accounting reference.'`,
+                    content: `Christina just finished a ${hours}-hour study session on ${topic}.${description ? ` How she's feeling: "${description}".` : ''} Hype her up like a boxing coach! Acknowledge how she's feeling and celebrate the work she just put in. Use boxing metaphors and make her feel like she's beating up the CPA exam. End with '- Coach Avi 🥊'`,
                 },
             ],
         });

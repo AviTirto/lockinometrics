@@ -12,6 +12,7 @@ export default function SessionForm({ onAdded }) {
   const [savedDuration, setSavedDuration] = useState(0);
   const [motivationMessage, setMotivationMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [activityTag, setActivityTag] = useState("practice-questions");
 
   // Timer effect
   useEffect(() => {
@@ -77,11 +78,11 @@ export default function SessionForm({ onAdded }) {
           messages: [
             {
               role: "system",
-              content: "You are Avi, Christina's supportive friend who knows NOTHING about accounting but tries to be funny about it. She's studying to become an accountant and preparing for her CPA exam. Your job is to acknowledge her feelings and what she accomplished in a relatable, kind way. Make silly accounting references like 'mo money mo problems', 'that's some serious bean counting', 'making cents of it all', 'cash rules everything around me', or other goofy money/accounting puns. Don't be overly inspirational - just be a supportive, slightly silly friend. Keep it to 2-3 sentences max. IMPORTANT: Always end with '- Avi' (as if you're signing the message yourself).",
+              content: "You are Coach Avi, Christina's boxing coach, but she's fighting the CPA exam instead of an opponent. This is her SECOND attempt - she failed the first time but she's BACK IN THE RING ready to knock out the CPA. Use intense boxing metaphors and motivational language like a coach hyping up their fighter. Say things like 'You're throwing PUNCHES at the CPA!', 'That's how you go rounds with the exam!', 'The CPA thought you were down but you got back up!', 'You're hitting the CPA with combo after combo!'. Be energetic, intense, and motivating. Keep it to 2-3 sentences max. Make her feel like a CHAMPION who's coming back for REVENGE. Always end with '- Coach Avi 🥊'",
             },
             {
               role: "user",
-              content: `Christina just finished a ${hours.toFixed(2)}-hour study session on ${sessionName || "Untitled Session"}.${description ? ` How she's feeling: "${description}".` : ''} Write a short, relatable response that acknowledges what she's feeling and what she accomplished. Include a silly/funny accounting reference since you (Avi) don't really know accounting. End with '- Avi'`,
+              content: `Christina just finished a ${hours.toFixed(2)}-hour study session on ${sessionName || "Untitled Session"}.${description ? ` How she's feeling: "${description}".` : ''} Hype her up like a boxing coach! Acknowledge how she's feeling and celebrate the work she just put in. Use boxing metaphors and make her feel like she's beating up the CPA exam. End with '- Coach Avi 🥊'`,
             },
           ],
         });
@@ -95,15 +96,23 @@ export default function SessionForm({ onAdded }) {
       console.log("AI motivation unavailable:", error);
     }
 
-    // Save to Firebase with motivation message
-    await addDoc(collection(db, "sessions"), {
-      topic: sessionName || "Untitled Session",
-      hours: Number(hours.toFixed(2)),
-      duration: savedDuration,
-      description,
-      motivation: aiMotivation,
-      createdAt: Timestamp.now(),
-    });
+    // Save to Firebase with motivation message and activity tag
+    try {
+      await addDoc(collection(db, "sessions2"), {
+        topic: sessionName || "Untitled Session",
+        hours: Number(hours.toFixed(2)),
+        duration: savedDuration,
+        description,
+        motivation: aiMotivation,
+        activityTag,
+        createdAt: Timestamp.now(),
+      });
+    } catch (error) {
+      console.error("Error saving session:", error);
+      alert("Failed to save session. Please check your browser extensions or try incognito mode.");
+      setIsSaving(false);
+      return;
+    }
 
     setIsSaving(false);
 
@@ -127,6 +136,7 @@ export default function SessionForm({ onAdded }) {
     setElapsedSeconds(0);
     setSavedDuration(0);
     setMotivationMessage("");
+    setActivityTag("practice-questions");
     setShowModal(false);
     onAdded();
   };
@@ -137,6 +147,7 @@ export default function SessionForm({ onAdded }) {
     setStartTime(null);
     setElapsedSeconds(0);
     setSavedDuration(0);
+    setActivityTag("practice-questions");
     setShowModal(false);
   };
 
@@ -150,33 +161,33 @@ export default function SessionForm({ onAdded }) {
   return (
     <>
       {/* Main Timer Card */}
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg border-2 border-teal-500/30 p-8">
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg border-2 border-red-500/30 p-8">
         {!isRunning ? (
           <div className="text-center">
-            <div className="text-6xl mb-4 animate-bounce">🎯</div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-              Ready to study?
+            <div className="text-6xl mb-4 animate-bounce">🥊</div>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent mb-2">
+              Ready for another round?
             </h2>
-            <p className="text-gray-300 mb-6">Francine is ready too! 😺</p>
+            <p className="text-gray-300 mb-6">Step into the ring! 🔥</p>
             <button
               onClick={handleStart}
-              className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-semibold py-4 px-8 rounded-full transition-all text-lg shadow-md hover:shadow-xl transform hover:scale-105"
+              className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold py-4 px-8 rounded-full transition-all text-lg shadow-md hover:shadow-xl transform hover:scale-105"
             >
-              Start Session ✨
+              Start Training 🥊
             </button>
           </div>
         ) : (
           <div className="text-center">
-            <div className="text-7xl font-mono font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent mb-4">
+            <div className="text-7xl font-mono font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent mb-4">
               {formatTime(elapsedSeconds)}
             </div>
-            <p className="text-gray-300 mb-2">Session in progress</p>
-            <p className="text-sm text-gray-400 mb-6">Francine is proud! 🐾</p>
+            <p className="text-gray-300 mb-2">Training in progress</p>
+            <p className="text-sm text-gray-400 mb-6">Keep throwing punches! 🔥</p>
             <button
               onClick={handleStop}
-              className="bg-gradient-to-r from-blue-400 to-teal-500 hover:from-blue-500 hover:to-teal-600 text-white font-semibold py-4 px-8 rounded-full transition-all text-lg shadow-md hover:shadow-xl transform hover:scale-105"
+              className="bg-gradient-to-r from-red-400 to-orange-500 hover:from-red-500 hover:to-orange-600 text-white font-semibold py-4 px-8 rounded-full transition-all text-lg shadow-md hover:shadow-xl transform hover:scale-105"
             >
-              Finish 🎉
+              End Round 🎯
             </button>
           </div>
         )}
@@ -208,6 +219,23 @@ export default function SessionForm({ onAdded }) {
                       autoFocus
                       disabled={isSaving}
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Activity Type
+                    </label>
+                    <select
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-gray-100 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+                      value={activityTag}
+                      onChange={(e) => setActivityTag(e.target.value)}
+                      disabled={isSaving}
+                    >
+                      <option value="practice-questions">Practice Questions</option>
+                      <option value="practice-exam">Practice Exam</option>
+                      <option value="lecture-video">Lecture Video</option>
+                      <option value="notes-review">Notes Review</option>
+                    </select>
                   </div>
 
                   <div>

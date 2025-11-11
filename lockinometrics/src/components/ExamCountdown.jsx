@@ -11,10 +11,16 @@ export default function ExamCountdown() {
   const examDate = new Date("2025-10-23T09:00:00"); // October 23, 2025 at 9 AM
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "sessions"), (snapshot) => {
-      const total = snapshot.docs.reduce((sum, doc) => sum + doc.data().hours, 0);
-      setTotalHours(total);
-    });
+    const unsub = onSnapshot(
+      collection(db, "sessions2"),
+      (snapshot) => {
+        const total = snapshot.docs.reduce((sum, doc) => sum + (doc.data().hours || 0), 0);
+        setTotalHours(total);
+      },
+      (error) => {
+        console.error("Error fetching exam countdown data:", error);
+      }
+    );
     return unsub;
   }, []);
 

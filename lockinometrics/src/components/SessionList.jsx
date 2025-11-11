@@ -2,22 +2,43 @@ import { useEffect, useState } from "react";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 
-export default function SessionList() {
+const activityIcons = {
+  "practice-questions": "📝",
+  "practice-exam": "📋",
+  "lecture-video": "🎥",
+  "notes-review": "📚"
+};
+
+const activityLabels = {
+  "practice-questions": "Practice Questions",
+  "practice-exam": "Practice Exam",
+  "lecture-video": "Lecture Video",
+  "notes-review": "Notes Review"
+};
+
+export default function SessionList({ selectedAttempt, borderColor = "border-teal-500/30" }) {
   const [sessions, setSessions] = useState([]);
   const [longestSession, setLongestSession] = useState(0);
 
   useEffect(() => {
-    const q = query(collection(db, "sessions"), orderBy("createdAt", "desc"));
-    const unsub = onSnapshot(q, (snapshot) => {
-      const sessionData = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-      setSessions(sessionData);
+    const collectionName = selectedAttempt === 1 ? "sessions" : "sessions2";
+    const q = query(collection(db, collectionName), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(
+      q,
+      (snapshot) => {
+        const sessionData = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        setSessions(sessionData);
 
-      // Find longest session for PR badge
-      const longest = Math.max(...sessionData.map(s => s.duration || 0));
-      setLongestSession(longest);
-    });
+        // Find longest session for PR badge
+        const longest = Math.max(...sessionData.map(s => s.duration || 0));
+        setLongestSession(longest);
+      },
+      (error) => {
+        console.error("Error fetching session list:", error);
+      }
+    );
     return unsub;
-  }, []);
+  }, [selectedAttempt]);
 
   const formatDuration = (seconds) => {
     if (!seconds) return "N/A";
@@ -50,7 +71,7 @@ export default function SessionList() {
       <h2 className="text-xl font-semibold text-gray-100 mb-4">Recent Activities</h2>
       <div className="space-y-3">
         {sessions.length === 0 && (
-          <div className="bg-gray-800 rounded-xl shadow-sm border border-teal-500/30 p-12 text-center">
+          <div className={`bg-gray-800 rounded-xl shadow-sm border ${borderColor} p-12 text-center transition-colors duration-500`}>
             <div className="text-5xl mb-3">📚</div>
             <p className="text-gray-300">No sessions yet</p>
             <p className="text-sm text-gray-400 mt-1">Start a session to track your study time</p>
@@ -58,10 +79,11 @@ export default function SessionList() {
         )}
         {sessions.map((s) => {
           const isPR = s.duration && s.duration === longestSession && longestSession > 0;
+          const hoverBorder = borderColor.replace('/30', '/50');
           return (
             <div
               key={s.id}
-              className="bg-gray-800 rounded-xl shadow-sm border border-teal-500/30 p-5 hover:border-teal-500/50 transition-colors"
+              className={`bg-gray-800 rounded-xl shadow-sm border ${borderColor} p-5 hover:${hoverBorder} transition-colors duration-500`}
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -73,6 +95,12 @@ export default function SessionList() {
                       </span>
                     )}
                   </div>
+                  {s.activityTag && (
+                    <div className="flex items-center gap-1 text-xs text-gray-400 mb-2">
+                      <span>{activityIcons[s.activityTag]}</span>
+                      <span>{activityLabels[s.activityTag]}</span>
+                    </div>
+                  )}
                   {s.description && (
                     <p className="text-sm text-gray-300 mb-2">
                       {s.description}

@@ -9,5 +9,14 @@ service cloud.firestore {
       allow update: if request.auth != null || true; // Allow updates
       allow delete: if request.auth != null || true; // Allow deletes
     }
+
+    // Sessions2 collection - Attempt 2 data
+    // Allow anyone to read and write (personal app without auth)
+    match /sessions2/{sessionId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if request.auth != null || true; // Allow updates
+      allow delete: if request.auth != null || true; // Allow deletes
+    }
   }
 }
