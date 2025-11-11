@@ -8,7 +8,7 @@ export default function ExamCountdown() {
   const [targetHours, setTargetHours] = useState(30);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [tempGoal, setTempGoal] = useState(30);
-  const examDate = new Date("2025-10-23T09:00:00"); // October 23, 2025 at 9 AM
+  const examDate = new Date("2025-12-05T09:00:00"); // December 5, 2025 at 9 AM
 
   useEffect(() => {
     const unsub = onSnapshot(
